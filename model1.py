@@ -27,9 +27,6 @@ import keras.layers as KL
 import keras.initializers as KI
 import keras.engine as KE
 import keras.models as KM
-## data augment keras
-from keras.preprocessing import image as KP
-##
 
 import utils
 
@@ -1192,22 +1189,6 @@ def load_image_gt(dataset, config, image_id, augment=False,
     # Load image and mask
     image = dataset.load_image(image_id)
     mask, class_ids = dataset.load_mask(image_id)
-    #### random crop
-    #if 3 in flag:
-    while False:
-        x = np.random.randint(0, 768)
-        y = np.random.randint(0, 768)
-        #tmpimage = np.zeros([1024, 1024, 3], dtype=np.uint8)
-        #tmpimage[x:x+256,y:y+256,:] = image[x:x+256,y:y+256,:]
-        #tmpmask = np.zeros([1024, 1024, mask.shape[2]], dtype=np.uint8)
-        #tmpmask[x:x+256,y:y+256,:] = mask[x:x+256,y:y+256,:]
-        tmpimage = image[x:x+256,y:y+256,:]
-        tmpmask = mask[x:x+256,y:y+256,:]
-        if 1 in tmpmask:
-            image = tmpimage
-            mask = tmpmask
-            break
-    ######
     shape = image.shape
     image, window, scale, padding = utils.resize_image(
         image,
@@ -1216,26 +1197,11 @@ def load_image_gt(dataset, config, image_id, augment=False,
         padding=config.IMAGE_PADDING)
     mask = utils.resize_mask(mask, scale, padding)
 
-    # Data Augment
+    # Random horizontal flips.
     if augment:
-        flag = np.random.randint(0,3,2)
-        #if random.randint(0, 1):
-            #image = np.fliplr(image)
-            #mask = np.fliplr(mask)
-            #original code below
-        #### random totate
-        if 1 in flag:
-            rg = 45
-            degree = np.random.uniform(-rg, rg)
-            image = KP.random_rotation(image, degree,row_axis=0, col_axis=1, channel_axis=2, fill_mode='constant')
-            if 0 not in class_ids:
-                mask = KP.random_rotation(mask, degree,row_axis=0, col_axis=1, channel_axis=2, fill_mode='constant')
-        ##################################
-        #### random channel shift
-        if 2 in flag:
-            image = KP.random_channel_shift(image, 5, channel_axis=2)
-        ##################################
-        
+        if random.randint(0, 1):
+            image = np.fliplr(image)
+            mask = np.fliplr(mask)
 
     # Note that some boxes might be all zeros if the corresponding mask got cropped out.
     # and here is to filter them out
@@ -2097,7 +2063,7 @@ class MaskRCNN():
         """
         # Optimizer object
         optimizer = keras.optimizers.SGD(lr=learning_rate, momentum=momentum,
-                                         decay=self.config.DECAY,clipnorm=5.0)
+                                         decay=1e-6,clipnorm=5.0)
         # Add Losses
         # First, clear previously set losses to avoid duplication
         self.keras_model._losses = []
