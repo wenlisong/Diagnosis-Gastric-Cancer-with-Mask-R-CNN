@@ -1194,19 +1194,20 @@ def load_image_gt(dataset, config, image_id, augment=False,
     mask, class_ids = dataset.load_mask(image_id)
     #### random crop
     #if 3 in flag:
-    while False:
-        x = np.random.randint(0, 768)
-        y = np.random.randint(0, 768)
+    size = 896
+    #while False:
+    #    x = np.random.randint(0, 1024-size)
+    #    y = np.random.randint(0, 1024-size)
         #tmpimage = np.zeros([1024, 1024, 3], dtype=np.uint8)
-        #tmpimage[x:x+256,y:y+256,:] = image[x:x+256,y:y+256,:]
+        #tmpimage[x:x+size,y:y+size,:] = image[x:x+size,y:y+size,:]
         #tmpmask = np.zeros([1024, 1024, mask.shape[2]], dtype=np.uint8)
-        #tmpmask[x:x+256,y:y+256,:] = mask[x:x+256,y:y+256,:]
-        tmpimage = image[x:x+256,y:y+256,:]
-        tmpmask = mask[x:x+256,y:y+256,:]
-        if 1 in tmpmask:
-            image = tmpimage
-            mask = tmpmask
-            break
+        #tmpmask[x:x+size,y:y+size,:] = mask[x:x+size,y:y+size,:]
+    #    tmpimage = image[x:x+size,y:y+size,:]
+    #    tmpmask = mask[x:x+size,y:y+size,:]
+    #    if 1 in tmpmask:
+    #        image = tmpimage
+    #        mask = tmpmask
+    #        break
     ######
     shape = image.shape
     image, window, scale, padding = utils.resize_image(
@@ -1218,22 +1219,22 @@ def load_image_gt(dataset, config, image_id, augment=False,
 
     # Data Augment
     if augment:
-        flag = np.random.randint(0,3,2)
+        #flag = np.random.randint(0,3,2)
         #if random.randint(0, 1):
             #image = np.fliplr(image)
             #mask = np.fliplr(mask)
             #original code below
         #### random totate
-        if 1 in flag:
-            rg = 45
-            degree = np.random.uniform(-rg, rg)
-            image = KP.random_rotation(image, degree,row_axis=0, col_axis=1, channel_axis=2, fill_mode='constant')
-            if 0 not in class_ids:
-                mask = KP.random_rotation(mask, degree,row_axis=0, col_axis=1, channel_axis=2, fill_mode='constant')
+        #if 1 in flag:
+        rg = 5
+        degree = np.random.uniform(-rg, rg)
+        image = KP.random_rotation(image, degree,row_axis=0, col_axis=1, channel_axis=2, fill_mode='constant')
+        if 0 not in class_ids:
+            mask = KP.random_rotation(mask, degree,row_axis=0, col_axis=1, channel_axis=2, fill_mode='constant')
         ##################################
         #### random channel shift
-        if 2 in flag:
-            image = KP.random_channel_shift(image, 5, channel_axis=2)
+        #if 2 in flag:
+        #    image = KP.random_channel_shift(image, 5, channel_axis=2)
         ##################################
         
 
@@ -2098,6 +2099,7 @@ class MaskRCNN():
         # Optimizer object
         optimizer = keras.optimizers.SGD(lr=learning_rate, momentum=momentum,
                                          decay=self.config.DECAY,clipnorm=5.0)
+        
         # Add Losses
         # First, clear previously set losses to avoid duplication
         self.keras_model._losses = []

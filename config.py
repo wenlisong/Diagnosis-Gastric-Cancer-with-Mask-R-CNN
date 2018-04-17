@@ -140,7 +140,7 @@ class Config(object):
     DECAY = 1e-6
 
     # Weight decay regularization
-    WEIGHT_DECAY = 0.0001 #0.0003
+    WEIGHT_DECAY = 0.0001
 
     # Use RPN ROIs or externally generated ROIs for training
     # Keep this True for most situations. Set to False if you want to train
