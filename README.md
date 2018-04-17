@@ -1,9 +1,12 @@
 # I apply Mask R-CNN to detect the pathological section of gastric cancer
 # Mask R-CNN for Object Detection and Segmentation
 
-# Here are some samples:
-![o1](assets/o1.png)
-[2](assets/1.png)
+Here are some samples:
+![o1](assets/o1.png) ![1](assets/1.png)
+![o2](assets/o2.png) ![2](assets/2.png)
+![o3](assets/o3.png) ![3](assets/3.png)
+![o4](assets/o4.png) ![4](assets/4.png)
+![o5](assets/o5.png) ![5](assets/5.png)
 
 This is an implementation of [Mask R-CNN](https://arxiv.org/abs/1703.06870) on Python 3, Keras, and TensorFlow. The model generates bounding boxes and segmentation masks for each instance of an object in the image. It's based on Feature Pyramid Network (FPN) and a ResNet101 backbone.
 
